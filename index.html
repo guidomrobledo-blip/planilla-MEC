@@ -17,9 +17,10 @@
   }
 
   button { background-color: #007bff; color: white; border: none; font-weight: bold; cursor: pointer; }
+  .btn-scan { background-color: #6c757d; margin-bottom: 5px; }
   #btnEnviar { background-color: #28a745; margin-top: 25px; font-size: 18px; }
 
-  /* VENTANA DEL ESCÁNER (MODAL) */
+  /* MODAL DEL ESCÁNER */
   #scanner-modal {
     display: none;
     position: fixed;
@@ -41,16 +42,11 @@
 
   #btn-cerrar {
     margin-top: 20px;
-    width: 60px;
-    height: 60px;
+    width: 60px; height: 60px;
     border-radius: 50%;
-    background: white;
-    color: red;
-    font-size: 24px;
-    border: 2px solid red;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    background: white; color: red;
+    font-size: 24px; border: 2px solid red;
+    display: flex; justify-content: center; align-items: center;
   }
 
   #mensaje { text-align: center; margin-top: 15px; font-weight: bold; }
@@ -69,6 +65,10 @@
     <option>Carlos</option>
   </select>
 
+  <label>Nro Pedido</label>
+  <input type="text" id="nro_pedido" inputmode="numeric" pattern="[0-9]*" placeholder="Escanear o manual">
+  <button type="button" class="btn-scan" onclick="iniciarEscaneo('nro_pedido')">📷 Escanear Pedido</button>
+
   <label>Fecha</label>
   <input type="date" id="fecha">
 
@@ -84,7 +84,7 @@
 
   <label>EAN de reemplazo</label>
   <input type="text" id="ean_reemplazo" inputmode="numeric" pattern="[0-9]*" placeholder="Escanear o manual">
-  <button type="button" onclick="iniciarEscaneo()">📷 Abrir Cámara</button>
+  <button type="button" class="btn-scan" onclick="iniciarEscaneo('ean_reemplazo')">📷 Escanear Reemplazo</button>
 
   <label>Unidades de reemplazo</label>
   <input type="number" id="uni_reemplazo" inputmode="numeric" min="1" value="1">
@@ -101,38 +101,35 @@
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <script>
-  // --- INICIO DE CONFIGURACIÓN ---
-  // PEGA TU URL DE GOOGLE ENTRE LAS COMILLAS:
+  // --- CONFIGURACIÓN ---
   const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbxymyQAzHrmo5axoTOJCBQU-B7BNfQf0HaS4mebm8gJLI6M4nna9hEUaEBPL8x-ogoeUg/exec"; 
-  // --- FIN DE CONFIGURACIÓN ---
+  // --- FIN CONFIGURACIÓN ---
 
   document.getElementById("fecha").valueAsDate = new Date();
   let html5QrCode;
+  let campoDestino = ""; // Para saber si guardar en 'nro_pedido' o 'ean_reemplazo'
 
-  function iniciarEscaneo() {
+  function iniciarEscaneo(idCampo) {
+    campoDestino = idCampo;
     document.getElementById("scanner-modal").style.display = "flex";
     
     if (!html5QrCode) {
         html5QrCode = new Html5Qrcode("reader");
     }
 
-    const config = { 
-        fps: 10, 
-        qrbox: { width: 280, height: 150 }, // Formato para código de barras
-        aspectRatio: 1.0 
-    };
+    const config = { fps: 10, qrbox: { width: 280, height: 150 }, aspectRatio: 1.0 };
 
     html5QrCode.start(
         { facingMode: "environment" }, 
         config,
         (decodedText) => {
-            document.getElementById("ean_reemplazo").value = decodedText;
+            document.getElementById(campoDestino).value = decodedText;
             if (navigator.vibrate) navigator.vibrate(100);
             detenerEscaneo();
         },
-        (errorMessage) => { /* Escaneando... */ }
+        (errorMessage) => { }
     ).catch((err) => {
-        alert("Error: Asegúrate de usar HTTPS y dar permisos de cámara.");
+        alert("Error de cámara.");
         detenerEscaneo();
     });
   }
@@ -153,6 +150,7 @@
     const btn = document.getElementById("btnEnviar");
     const datos = {
       pickeador: document.getElementById("pickeador").value,
+      nro_pedido: document.getElementById("nro_pedido").value.trim(),
       fecha: document.getElementById("fecha").value,
       ean_origen: document.getElementById("ean_origen").value.trim(),
       uni_origen: document.getElementById("uni_origen").value,
@@ -160,13 +158,13 @@
       uni_reemplazo: document.getElementById("uni_reemplazo").value
     };
 
-    if (!datos.pickeador || !datos.ean_origen || !datos.ean_reemplazo) {
+    if (!datos.pickeador || !datos.nro_pedido || !datos.ean_origen || !datos.ean_reemplazo) {
       mostrar("Faltan datos ❌", "red");
       return;
     }
 
     btn.disabled = true;
-    mostrar("Enviando a Sheet... ⏳", "orange");
+    mostrar("Guardando... ⏳", "orange");
 
     try {
       await fetch(URL_APPS_SCRIPT, {
@@ -175,9 +173,9 @@
         body: JSON.stringify(datos)
       });
       
-      mostrar("¡Guardado correctamente! ✅", "green");
+      mostrar("¡Guardado! ✅", "green");
       
-      // Limpiar EANs
+      // Limpiamos campos menos el pickeador y el nro_pedido (por si hay varios reemplazos en un mismo pedido)
       document.getElementById("ean_origen").value = "";
       document.getElementById("ean_reemplazo").value = "";
       document.getElementById("uni_origen").value = "1";
