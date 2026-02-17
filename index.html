@@ -51,21 +51,21 @@
 
   #mensaje { text-align: center; margin-top: 15px; font-weight: bold; }
 
-  /* --- AVISO VISUAL DE ERROR --- */
+  /* --- AVISO VISUAL DE ERROR (CENTRO DE PANTALLA) --- */
   #aviso-error {
     display: none;
     position: fixed;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
     background-color: white;
-    border: 3px solid red;
-    padding: 20px;
-    border-radius: 12px;
+    border: 4px solid red;
+    padding: 25px;
+    border-radius: 15px;
     z-index: 2000;
-    width: 80%;
-    max-width: 350px;
+    width: 85%;
+    max-width: 380px;
     text-align: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
   }
 </style>
 </head>
@@ -73,9 +73,9 @@
 <body>
 
 <div id="aviso-error">
-  <p style="color: red; font-weight: bold; font-size: 18px;">⚠️ ATENCIÓN</p>
-  <p id="error-texto">Los EAN no pueden ser iguales, por favor corregir</p>
-  <button onclick="cerrarAviso()" style="background-color: #6c757d;">Cerrar</button>
+  <p style="color: red; font-weight: bold; font-size: 20px; margin-top: 0;">⚠️ ERROR</p>
+  <p id="error-texto" style="font-size: 18px; color: #333; line-height: 1.4;">Los EAN no pueden ser iguales, por favor corregir</p>
+  <button onclick="cerrarAviso()" style="background-color: #d9534f; margin-top: 15px;">Entendido</button>
 </div>
 
 <main>
@@ -125,16 +125,14 @@
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <script>
-  // --- CONFIGURACIÓN ---
   const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbxymyQAzHrmo5axoTOJCBQU-B7BNfQf0HaS4mebm8gJLI6M4nna9hEUaEBPL8x-ogoeUg/exec"; 
-  // --- FIN CONFIGURACIÓN ---
 
   document.getElementById("fecha").valueAsDate = new Date();
   let html5QrCode;
   let campoDestino = ""; 
 
   function iniciarEscaneo(idCampo) {
-    campoDestino = idCampo;
+    campoDestino = document.getElementById(idCampo);
     document.getElementById("scanner-modal").style.display = "flex";
     
     if (!html5QrCode) {
@@ -147,7 +145,7 @@
         { facingMode: "environment" }, 
         config,
         (decodedText) => {
-            document.getElementById(campoDestino).value = decodedText;
+            campoDestino.value = decodedText.trim();
             if (navigator.vibrate) navigator.vibrate(100);
             detenerEscaneo();
         },
@@ -181,25 +179,31 @@
 
   async function validar() {
     const btn = document.getElementById("btnEnviar");
+    
+    // Captura y limpieza de valores para comparación exacta
+    const eanO = document.getElementById("ean_origen").value.trim();
+    const eanR = document.getElementById("ean_reemplazo").value.trim();
+
     const datos = {
       pickeador: document.getElementById("pickeador").value,
       nro_pedido: document.getElementById("nro_pedido").value.trim(),
       fecha: document.getElementById("fecha").value,
-      ean_origen: document.getElementById("ean_origen").value.trim(),
+      ean_origen: eanO,
       uni_origen: document.getElementById("uni_origen").value,
-      ean_reemplazo: document.getElementById("ean_reemplazo").value.trim(),
+      ean_reemplazo: eanR,
       uni_reemplazo: document.getElementById("uni_reemplazo").value
     };
 
-    if (!datos.pickeador || !datos.nro_pedido || !datos.ean_origen || !datos.ean_reemplazo) {
+    // Validación de campos vacíos
+    if (!datos.pickeador || !datos.nro_pedido || !eanO || !eanR) {
       mostrar("Faltan datos ❌", "red");
       return;
     }
 
-    // --- NUEVA VALIDACIÓN: EAN IGUALES ---
-    if (datos.ean_origen === datos.ean_reemplazo) {
-      mostrarAviso();
-      return;
+    // --- CONTROL DE DUPLICADOS (EAN ORIGEN VS REEMPLAZO) ---
+    if (eanO === eanR) {
+      mostrarAviso(); // Muestra el cartel central
+      return; // Detiene la ejecución, no guarda nada
     }
 
     btn.disabled = true;
