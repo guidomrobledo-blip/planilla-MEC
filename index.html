@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,95 +5,224 @@
 <title>MEC – Reemplazos</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <style>
-  body { font-family: sans-serif; margin: 0; padding: 0; background-color: #f4f4f9; position: relative; }
-  header { background: #333; color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; position: relative; }
+  /* --- NUEVA CARROCERÍA (DISEÑO) --- */
+  :root {
+    --azul-corporativo: #003a70;
+    --gris-fondo: #f4f7f6;
+    --blanco: #ffffff;
+  }
+
+  body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; background-color: var(--gris-fondo); color: #333; }
+  
+  header { 
+    background: var(--azul-corporativo); 
+    color: white; 
+    padding: 15px; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    position: sticky; 
+    top: 0; 
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  header span { font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* CORRECCIÓN MENÚ: Ubicación esquina superior derecha real */
+  #menu-btn { 
+    background: none; 
+    border: none; 
+    font-size: 30px; 
+    color: white; 
+    cursor: pointer; 
+    position: absolute; 
+    right: 15px; 
+    top: 50%; 
+    transform: translateY(-50%); 
+    display: flex;
+    align-items: center;
+  }
+
+  #menu-content { 
+    display: none; 
+    position: absolute; 
+    right: 10px; 
+    top: 55px; 
+    background: white; 
+    border: none; 
+    border-radius: 12px; 
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2); 
+    z-index: 1500; 
+    width: 220px; 
+    padding: 15px;
+  }
+
   main { padding: 15px; max-width: 500px; margin: auto; }
+
+  /* ESTILO TARJETAS (CARDS) */
+  .card {
+    background: var(--blanco);
+    border-radius: 15px;
+    padding: 18px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+
+  .card-title {
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--azul-corporativo);
+    margin-bottom: 12px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+    text-transform: uppercase;
+  }
   
-  /* Ajuste del Menú a la Derecha */
-  #menu-btn { background: none; border: none; font-size: 24px; color: white; cursor: pointer; padding: 5px; position: absolute; right: 15px; top: 10px; }
-  #menu-content { display: none; position: absolute; right: 15px; top: 50px; background: white; border: 1px solid #ccc; padding: 15px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 1500; width: 200px; }
+  label { font-weight: 600; display: block; margin-top: 10px; font-size: 14px; color: #555; }
   
-  input, select, button { width: 100%; padding: 12px; font-size: 16px; margin-top: 5px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 8px; }
-  button { background-color: #007bff; color: white; border: none; font-weight: bold; cursor: pointer; }
-  .btn-scan { background-color: #6c757d; margin-bottom: 5px; }
-  #btnEnviar { background-color: #28a745; margin-top: 25px; font-size: 18px; }
-  .detalle-container { display: none; background: #e9ecef; padding: 10px; border-radius: 8px; margin-top: 5px; border-left: 5px solid #007bff; }
+  input, select { 
+    width: 100%; 
+    padding: 12px; 
+    font-size: 16px; 
+    margin-top: 5px; 
+    box-sizing: border-box; 
+    border: 1px solid #ddd; 
+    border-radius: 8px; 
+    background: #fdfdfd;
+  }
+
+  /* BOTONES PÍLDORA */
+  button { 
+    width: 100%; 
+    padding: 14px; 
+    font-size: 16px; 
+    margin-top: 8px; 
+    box-sizing: border-box; 
+    border: none; 
+    border-radius: 50px; /* Forma de píldora */
+    font-weight: bold; 
+    cursor: pointer; 
+    transition: opacity 0.2s;
+  }
+
+  button:active { opacity: 0.8; }
+
+  .btn-scan { background-color: #f0f0f0; color: var(--azul-corporativo); border: 1px solid var(--azul-corporativo); }
+  
+  #btnEnviar { background-color: var(--azul-corporativo); color: white; margin-top: 20px; font-size: 18px; }
+
+  .detalle-container { display: none; background: #eef2ff; padding: 12px; border-radius: 10px; margin-top: 8px; border-left: 5px solid var(--azul-corporativo); }
   
   #scanner-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; }
-  #reader { width: 90%; max-width: 400px; background: white; border-radius: 8px; overflow: hidden; }
+  #reader { width: 90%; max-width: 400px; background: white; border-radius: 15px; overflow: hidden; }
   
-  /* Avisos de Error */
-  #aviso-error, #aviso-duplicado { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; border: 3px solid red; padding: 20px; border-radius: 12px; z-index: 3000; width: 80%; text-align: center; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
-  #mensaje { text-align: center; margin-top: 15px; font-weight: bold; }
+  /* MODALES DE AVISO */
+  #aviso-error, #aviso-duplicado { 
+    display: none; 
+    position: fixed; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+    background-color: white; 
+    padding: 25px; 
+    border-radius: 20px; 
+    z-index: 3000; 
+    width: 80%; 
+    text-align: center; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+  }
+
+  #mensaje { text-align: center; margin-top: 20px; font-weight: bold; font-size: 16px; }
+  hr { border: 0; border-top: 1px solid #eee; margin: 15px 0; }
 </style>
 </head>
 <body>
 
 <header>
-  <span>MEC Reemplazos</span>
+  <span>MEC REEMPLAZOS</span>
   <button id="menu-btn" onclick="toggleMenu()">☰</button>
   <div id="menu-content">
     <label style="margin:0; color: #333; font-size: 14px;">Fila a Corregir:</label>
     <input type="number" id="input_fila" inputmode="numeric" placeholder="Ej: 5">
-    <button onclick="cargarFila()" style="background:#6c757d; margin-top:10px">Cargar</button>
+    <button onclick="cargarFila()" style="background:var(--azul-corporativo); margin-top:10px">Cargar</button>
   </div>
 </header>
 
 <div id="aviso-error">
-  <p style="color: red; font-weight: bold;">⚠️ ATENCIÓN: Los EAN son iguales</p>
-  <button onclick="cerrarAviso('aviso-error')" style="background-color: #6c757d;">Cerrar</button>
+  <p style="font-size: 40px; margin: 0;">⚠️</p>
+  <p style="color: red; font-weight: bold; font-size: 18px;">EAN IGUALES</p>
+  <p>El código de origen y reemplazo no pueden ser el mismo.</p>
+  <button onclick="cerrarAviso('aviso-error')" style="background-color: #666; border-radius: 50px;">Cerrar</button>
 </div>
 
 <div id="aviso-duplicado">
-  <p id="msg-duplicado" style="color: red; font-weight: bold;"></p>
-  <button onclick="cerrarAviso('aviso-duplicado')" style="background-color: #6c757d;">Cerrar</button>
+  <p style="font-size: 40px; margin: 0;">🚫</p>
+  <p id="msg-duplicado" style="color: red; font-weight: bold; font-size: 16px;"></p>
+  <button onclick="cerrarAviso('aviso-duplicado')" style="background-color: #666; border-radius: 50px;">Cerrar</button>
 </div>
 
 <main>
-  <h2 id="titulo-modo" style="text-align: center;">Nueva Carga</h2>
+  <h2 id="titulo-modo" style="text-align: center; font-size: 18px; color: #555;">Nueva Carga</h2>
   
-  <label>Pickeador</label>
-  <select id="pickeador"><option value="">Seleccionar</option><option>Juan</option><option>Ana</option><option>Carlos</option></select>
-  
-  <label>Nro Pedido</label>
-  <input type="text" id="nro_pedido" inputmode="numeric">
-  <button type="button" class="btn-scan" onclick="iniciarEscaneo('nro_pedido')">📷 Escanear Pedido</button>
-  
-  <label>Fecha</label>
-  <input type="date" id="fecha">
-  <hr>
-
-  <label>EAN Origen</label>
-  <input type="text" id="ean_origen" inputmode="numeric" oninput="checkEAN(this, 'cont_origen')">
-  <div id="cont_origen" class="detalle-container">
-    <label style="font-size:12px">Detalle Origen (Pesable):</label>
-    <input type="text" id="det_origen">
+  <div class="card">
+    <div class="card-title">Información de Pedido</div>
+    <label>Pickeador</label>
+    <select id="pickeador">
+      <option value="">Seleccionar</option>
+      <option>Juan</option>
+      <option>Ana</option>
+      <option>Carlos</option>
+    </select>
+    
+    <label>Nro Pedido</label>
+    <input type="text" id="nro_pedido" inputmode="numeric" placeholder="Ingrese o escanee">
+    <button type="button" class="btn-scan" onclick="iniciarEscaneo('nro_pedido')">📷 Escanear Pedido</button>
+    
+    <label>Fecha</label>
+    <input type="date" id="fecha">
   </div>
 
-  <label>Unidades</label>
-  <input type="text" id="uni_origen" inputmode="decimal" value="1">
-  <hr>
+  <div class="card">
+    <div class="card-title">Producto Original</div>
+    <label>EAN Origen</label>
+    <input type="text" id="ean_origen" inputmode="numeric" oninput="checkEAN(this, 'cont_origen')" placeholder="Código del artículo">
+    <div id="cont_origen" class="detalle-container">
+      <label style="font-size:12px">Detalle Origen (Pesable):</label>
+      <input type="text" id="det_origen">
+    </div>
 
-  <label>EAN Reemplazo</label>
-  <input type="text" id="ean_reemplazo" inputmode="numeric" oninput="checkEAN(this, 'cont_reemplazo')">
-  <button type="button" class="btn-scan" onclick="iniciarEscaneo('ean_reemplazo')">📷 Escanear Reemplazo</button>
-  <div id="cont_reemplazo" class="detalle-container">
-    <label style="font-size:12px">Detalle Reemplazo (Pesable):</label>
-    <input type="text" id="det_reemplazo">
+    <label>Unidades</label>
+    <input type="text" id="uni_origen" inputmode="decimal" value="1">
   </div>
 
-  <label>Unidades</label>
-  <input type="text" id="uni_reemplazo" inputmode="decimal" value="1">
+  <div class="card">
+    <div class="card-title">Producto Reemplazo</div>
+    <label>EAN Reemplazo</label>
+    <input type="text" id="ean_reemplazo" inputmode="numeric" oninput="checkEAN(this, 'cont_reemplazo')" placeholder="Código del reemplazo">
+    <button type="button" class="btn-scan" onclick="iniciarEscaneo('ean_reemplazo')">📷 Escanear Reemplazo</button>
+    <div id="cont_reemplazo" class="detalle-container">
+      <label style="font-size:12px">Detalle Reemplazo (Pesable):</label>
+      <input type="text" id="det_reemplazo">
+    </div>
+
+    <label>Unidades</label>
+    <input type="text" id="uni_reemplazo" inputmode="decimal" value="1">
+  </div>
   
   <button id="btnEnviar" onclick="validar()">✅ GUARDAR DATOS</button>
   <button id="btnCancelar" onclick="cancelarEdicion()" style="display:none; background:#dc3545; margin-top:10px">❌ CANCELAR EDICIÓN</button>
   <p id="mensaje"></p>
 </main>
 
-<div id="scanner-modal"><div id="reader"></div><button onclick="detenerEscaneo()" style="width: 60px; height: 60px; border-radius: 50%; background: white; color: red; margin-top: 20px;">X</button></div>
+<div id="scanner-modal">
+  <div id="reader"></div>
+  <button onclick="detenerEscaneo()" style="width: 70px; height: 70px; border-radius: 50%; background: white; color: red; margin-top: 30px; font-size: 20px;">X</button>
+</div>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
 <script>
+  /* --- MOTOR (IDÉNTICO AL ORIGINAL) --- */
   const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbxymyQAzHrmo5axoTOJCBQU-B7BNfQf0HaS4mebm8gJLI6M4nna9hEUaEBPL8x-ogoeUg/exec"; 
   let html5QrCode, campoDestino, modoEdicion = false, filaEdicion = null;
   document.getElementById("fecha").valueAsDate = new Date();
