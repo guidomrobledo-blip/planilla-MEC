@@ -15,40 +15,45 @@
 
   body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; background-color: var(--gris-fondo); color: #333; }
   
- header { 
-    background: var(--azul-corporativo); 
-    color: white; 
-    padding: 15px; 
-    display: flex; 
-    justify-content: space-between; /* Esto separa el botón del título */
-    align-items: center;
-    position: sticky; 
-    top: 0; 
-    z-index: 1000;
-  }
+header { 
+  background: var(--azul-corporativo); 
+  color: white; 
+  padding: 15px 10px; 
+  text-align: center; 
+  position: relative; 
+  position: sticky; 
+  top: 0; 
+  z-index: 1000;
+  min-height: 40px; /* Asegura altura para el botón */
+}
+
+header span { 
+  font-weight: bold; 
+  font-size: 18px; 
+  text-transform: uppercase; 
+  white-space: nowrap; /* Evita que el título se parta en dos líneas */
+}
 
   header span { font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px; }
 
-#menu-btn {
-    background: transparent !important;
-    border: none !important;
-    font-size: 30px !important;
-    color: #ffffff !important;
-    cursor: pointer !important;
-    
-    /* POSICIONAMIENTO NATURAL A LA IZQUIERDA */
-    position: relative !important;
-    float: left; /* Lo empuja a la izquierda */
-    
-    /* AJUSTES DE ESPACIADO */
-    margin: 0 !important;
-    padding: 0 !important;
-    line-height: 1 !important;
-    z-index: 1001 !important;
-    outline: none !important;
-    -webkit-appearance: none !important;
-  }
-
+#menu-btn { 
+  background: none !important; 
+  border: none !important; 
+  font-size: 28px !important; 
+  color: #ffffff !important; /* Blanco real */
+  cursor: pointer; 
+  position: absolute !important; 
+  right: 15px !important; /* Lo mandamos a la derecha */
+  top: 50% !important; 
+  transform: translateY(-50%) !important; 
+  
+  /* ESTO QUITA EL EFECTO GRIS/EMOJI */
+  font-family: Arial, sans-serif !important;
+  line-height: 1 !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+  -webkit-appearance: none;
+}
   #menu-content { 
     display: none; 
     position: absolute; 
