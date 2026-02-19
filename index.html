@@ -26,7 +26,9 @@
     top: 0; 
     z-index: 1000;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    position: relative;
+    position: relative !important; 
+    display: block !important; /* Cambiamos flex por block para liberar al botón */
+    text-align: center; /* Esto mantendrá el título centrado */
   }
 
   header span { font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px; }
@@ -39,13 +41,16 @@
     color: #ffffff !important; 
     cursor: pointer; 
     position: absolute !important; 
-    right: 15px !important; 
+    
+    /* TRUCO MAESTRO: */
+    left: auto !important;   /* Anulamos cualquier empuje desde la izquierda */
+    right: 20px !important;  /* Lo obligamos a pegarse a la derecha */
+    
     top: 50% !important; 
     transform: translateY(-50%) !important; 
     display: flex !important;
     align-items: center !important;
-    outline: none !important;
-  }
+}
 
   #menu-content { 
     display: none; 
