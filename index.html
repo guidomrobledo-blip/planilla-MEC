@@ -11,7 +11,7 @@
 
 <style>
   :root {
-    --azul-corporativo: #003a70;
+    --azul-corp: #003a70;
     --gris-fondo: #f4f7f6;
     --blanco: #ffffff;
     --verde-exito: #28a745;
@@ -22,40 +22,23 @@
   body { font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0; background-color: var(--gris-fondo); color: #333; padding-bottom: 100px; }
   
   header { 
-    background: var(--azul-corporativo); 
-    color: white; 
-    padding: 15px; 
-    text-align: center;
-    position: sticky; 
-    top: 0; 
-    z-index: 1000;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background: var(--azul-corp); color: white; padding: 15px; text-align: center;
+    position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
-
   header span { font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px; }
 
   main { padding: 15px; max-width: 500px; margin: auto; }
 
   .card {
-    background: var(--blanco);
-    border-radius: 15px;
-    padding: 18px;
-    margin-bottom: 15px;
+    background: var(--blanco); border-radius: 15px; padding: 18px; margin-bottom: 15px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.05);
   }
-
   .card-title {
-    font-size: 13px;
-    font-weight: bold;
-    color: var(--azul-corporativo);
-    margin-bottom: 12px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 5px;
-    text-transform: uppercase;
+    font-size: 13px; font-weight: bold; color: var(--azul-corp);
+    margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 5px; text-transform: uppercase;
   }
   
   label { font-weight: 600; display: block; margin-top: 10px; font-size: 14px; color: #555; }
-  
   input, select { 
     width: 100%; padding: 12px; font-size: 16px; margin-top: 5px; 
     box-sizing: border-box; border: 1px solid #ddd; border-radius: 8px; background: #fdfdfd;
@@ -63,81 +46,62 @@
 
   /* BARRA INFERIOR */
   .bottom-nav {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    max-width: 450px;
-    background: #333;
-    height: 70px;
-    border-radius: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    padding: 0 10px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-    z-index: 2000;
-    transition: background 0.3s;
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    width: 90%; max-width: 450px; background: #333; height: 70px; border-radius: 50px;
+    display: flex; align-items: center; justify-content: space-around; padding: 0 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 2000; transition: background 0.3s;
   }
-
   .nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: white;
-    text-decoration: none;
-    font-size: 10px;
-    background: none;
-    border: none;
-    cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; color: white;
+    background: none; border: none; cursor: pointer; font-size: 10px;
   }
-
-  .nav-item i { font-size: 24px; margin-bottom: 2px; }
-
-  /* BOTÓN CENTRAL DINÁMICO */
   .btn-main {
-    background: var(--verde-exito);
-    color: white;
-    border: none;
-    padding: 12px 25px;
-    border-radius: 50px;
-    font-weight: bold;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    background: var(--verde-exito); color: white; border: none; padding: 12px 25px;
+    border-radius: 50px; font-weight: bold; font-size: 14px; min-width: 160px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    min-width: 160px;
-    justify-content: center;
   }
-
-  /* ESTADOS DE BARRA */
   .nav-edit-mode { background: #555; }
 
-  /* BOTONES ESCÁNER INTERNOS */
-  .btn-scan { background-color: #f0f0f0; color: var(--azul-corporativo); border: 1px solid var(--azul-corporativo); width: 100%; padding: 10px; border-radius: 50px; font-weight: bold; margin-top: 8px; cursor: pointer; }
+  .btn-scan { background-color: #f0f0f0; color: var(--azul-corp); border: 1px solid var(--azul-corp); width: 100%; padding: 10px; border-radius: 50px; font-weight: bold; margin-top: 8px; }
 
-  .detalle-container { display: none; background: #eef2ff; padding: 12px; border-radius: 10px; margin-top: 8px; border-left: 5px solid var(--azul-corporativo); }
+  .detalle-container { display: none; background: #eef2ff; padding: 12px; border-radius: 10px; margin-top: 8px; border-left: 5px solid var(--azul-corp); }
   
-  #scanner-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; flex-direction: column; justify-content: center; align-items: center; }
+  /* SISTEMA DE MODALES UNIFICADO */
+  .modal-overlay {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6); z-index: 4000; align-items: center; justify-content: center;
+  }
+  .modal-card {
+    background: white; width: 85%; max-width: 350px; border-radius: 20px; overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4); animation: scaleUp 0.2s ease-out;
+  }
+  @keyframes scaleUp { from {transform: scale(0.8); opacity: 0;} to {transform: scale(1); opacity: 1;} }
+  
+  .modal-header { background: var(--azul-corp); color: white; padding: 12px; text-align: center; font-weight: bold; position: relative; }
+  .modal-body { padding: 20px; text-align: center; font-size: 16px; line-height: 1.4; }
+  .modal-footer { display: flex; border-top: 1px solid #eee; }
+  .modal-btn { 
+    flex: 1; padding: 15px; border: none; background: none; font-size: 14px; 
+    font-weight: bold; cursor: pointer; text-transform: uppercase;
+  }
+  .modal-btn-primary { color: var(--azul-corp); }
+  .modal-btn-danger { color: var(--rojo-error); }
+  .modal-btn-neutral { color: #888; border-right: 1px solid #eee; }
+
+  .icon-alerta { font-size: 40px; display: block; margin-bottom: 10px; }
+  .text-rojo { color: var(--rojo-error); font-weight: bold; }
+
+  #scanner-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 5000; flex-direction: column; justify-content: center; align-items: center; }
   #reader { width: 90%; max-width: 400px; background: white; border-radius: 15px; overflow: hidden; }
-  
-  /* MODALES */
-  .modal-aviso { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; border-radius: 20px; z-index: 4000; width: 80%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-
-  #mensaje-flotante { text-align: center; margin-bottom: 10px; font-weight: bold; font-size: 14px; }
 </style>
 </head>
 <body>
 
-<header>
-  <span id="header-text">REEMPLAZOS MEC</span>
-</header>
+<header><span id="header-text">REEMPLAZOS MEC</span></header>
 
 <main>
-  <div id="mensaje-flotante"></div>
-
+  <div id="mensaje-flotante" style="text-align:center; height: 20px; font-weight:bold;"></div>
+  
   <div class="card">
     <div class="card-title">Información de Pedido</div>
     <label>Pickeador</label>
@@ -145,11 +109,9 @@
       <option value="">Seleccionar</option>
       <option>Juan</option><option>Ana</option><option>Carlos</option>
     </select>
-    
     <label>Nro Pedido</label>
     <input type="text" id="nro_pedido" inputmode="numeric">
     <button type="button" class="btn-scan" onclick="iniciarEscaneo('nro_pedido')">📷 Escanear Pedido</button>
-    
     <label>Fecha</label>
     <input type="date" id="fecha">
   </div>
@@ -181,93 +143,113 @@
 </main>
 
 <nav class="bottom-nav" id="bottomNav">
-  <button class="nav-item" id="btnIzquierdo" onclick="accionIzquierda()">
-    <span style="font-size:24px" id="iconIzquierdo">➕</span>
-    <span id="txtIzquierdo">Nuevo</span>
-  </button>
-
-  <button class="btn-main" id="btnCentro" onclick="validar()">
-    <span id="txtCentro">GUARDAR DATOS</span>
-  </button>
-
-  <button class="nav-item" id="btnDerecho" onclick="accionDerecha()">
-    <span style="font-size:24px" id="iconDerecho">✏️</span>
-    <span id="txtDerecho">Editar</span>
-  </button>
+  <button class="nav-item" id="btnIzquierdo" onclick="clickNuevo()"><span style="font-size:24px">➕</span><span id="txtIz">Nuevo</span></button>
+  <button class="btn-main" onclick="validar()"><span id="txtCentro">GUARDAR DATOS</span></button>
+  <button class="nav-item" id="btnDerecho" onclick="clickEditar()"><span style="font-size:24px">✏️</span><span id="txtDe">Editar</span></button>
 </nav>
 
-<div id="aviso-error" class="modal-aviso">
-  <p style="font-size: 40px; margin: 0;">⚠️</p>
-  <p style="color: red; font-weight: bold;">EAN IGUALES</p>
-  <button onclick="cerrarAviso('aviso-error')" style="background:#666; color:white; border:none; padding:10px 20px; border-radius:50px;">Cerrar</button>
-</div>
-
-<div id="aviso-confirmar-borrar" class="modal-aviso">
-  <p style="font-size: 40px; margin: 0;">🗑️</p>
-  <p>¿Seguro que quieres <b>ELIMINAR</b> la fila <span id="nro-fila-borrar"></span>?</p>
-  <div style="display:flex; gap:10px; justify-content:center;">
-    <button onclick="ejecutarEliminar()" style="background:var(--rojo-error); color:white; border:none; padding:10px; border-radius:10px; flex:1;">SÍ, ELIMINAR</button>
-    <button onclick="cerrarAviso('aviso-confirmar-borrar')" style="background:#ccc; border:none; padding:10px; border-radius:10px; flex:1;">NO</button>
+<div id="modal-app" class="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-header" id="modal-titulo">AVISO</div>
+    <div class="modal-body">
+      <span id="modal-icono" class="icon-alerta" style="display:none">⚠️</span>
+      <div id="modal-contenido"></div>
+      <input type="number" id="modal-input" style="display:none; margin-top:15px; text-align:center;" placeholder="Fila #">
+    </div>
+    <div class="modal-footer" id="modal-footer">
+      </div>
   </div>
 </div>
 
-<div id="scanner-modal">
-  <div id="reader"></div>
-  <button onclick="detenerEscaneo()" style="width: 60px; height: 60px; border-radius: 50%; background: white; color: red; margin-top: 20px; font-weight: bold;">X</button>
-</div>
+<div id="scanner-modal"><div id="reader"></div><button onclick="detenerEscaneo()" style="width:60px;height:60px;border-radius:50%;background:white;color:red;margin-top:20px;">X</button></div>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
 <script>
-  const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbxymyQAzHrmo5axoTOJCBQU-B7BNfQf0HaS4mebm8gJLI6M4nna9hEUaEBPL8x-ogoeUg/exec"; 
-  let html5QrCode, campoDestino, modoEdicion = false, filaEdicion = null;
+  const URL_AS = "https://script.google.com/macros/s/AKfycbxymyQAzHrmo5axoTOJCBQU-B7BNfQf0HaS4mebm8gJLI6M4nna9hEUaEBPL8x-ogoeUg/exec";
+  let modoEdicion = false, filaEdicion = null, html5QrCode;
   document.getElementById("fecha").valueAsDate = new Date();
 
-  function vibrar() { if (navigator.vibrate) navigator.vibrate(200); }
+  function vibrar() { if (navigator.vibrate) navigator.vibrate(150); }
 
-  function checkEAN(input, containerId) {
-    const val = input.value.trim();
-    const prefijos = ["23", "25", "26", "29"];
-    const container = document.getElementById(containerId);
-    container.style.display = prefijos.some(p => val.startsWith(p)) ? "block" : "none";
+  // GESTIÓN DE MODALES PERSONALIZADOS
+  function abrirModal({titulo, cuerpo, icono, input, btnOk, btnNo, callback}) {
+    document.getElementById("modal-titulo").innerText = titulo;
+    document.getElementById("modal-contenido").innerHTML = cuerpo;
+    document.getElementById("modal-icono").style.display = icono ? "block" : "none";
+    const inpt = document.getElementById("modal-input");
+    inpt.style.display = input ? "block" : "none";
+    inpt.value = "";
+    
+    const footer = document.getElementById("modal-footer");
+    footer.innerHTML = "";
+    
+    if(btnNo) {
+      let bNo = document.createElement("button");
+      bNo.className = "modal-btn modal-btn-neutral";
+      bNo.innerText = btnNo;
+      bNo.onclick = () => cerrarModal();
+      footer.appendChild(bNo);
+    }
+    
+    let bOk = document.createElement("button");
+    bOk.className = "modal-btn modal-btn-primary";
+    bOk.innerText = btnOk || "ACEPTAR";
+    bOk.onclick = () => { 
+      let val = inpt.value; 
+      cerrarModal(); 
+      if(callback) callback(val); 
+    };
+    footer.appendChild(bOk);
+    
+    document.getElementById("modal-app").style.display = "flex";
   }
 
-  function mostrar(t, c) { 
-    const m = document.getElementById("mensaje-flotante"); 
-    m.innerText = t; m.style.color = c; 
-    if(c === 'green') setTimeout(() => m.innerText = "", 3000);
-  }
+  function cerrarModal() { document.getElementById("modal-app").style.display = "none"; }
 
-  function accionIzquierda() {
-    if (modoEdicion) cancelarEdicion();
+  // LOGICA DE BOTONES
+  function clickNuevo() {
+    if(modoEdicion) cancelarEdicion();
     else {
-      if(confirm("¿Limpiar todos los campos?")) {
-        document.querySelectorAll("input").forEach(i => i.value = "");
-        document.getElementById("fecha").valueAsDate = new Date();
-        document.getElementById("uni_origen").value = "1";
-        document.getElementById("uni_reemplazo").value = "1";
-        mostrar("Campos limpios", "black");
-      }
+      abrirModal({
+        titulo: "CONFIRMAR",
+        cuerpo: "¿Limpiar todos los campos?",
+        btnNo: "NO", btnOk: "SÍ",
+        callback: () => {
+          document.querySelectorAll("input").forEach(i => i.value="");
+          document.getElementById("fecha").valueAsDate = new Date();
+          document.getElementById("uni_origen").value = "1";
+          document.getElementById("uni_reemplazo").value = "1";
+        }
+      });
     }
   }
 
-  async function accionDerecha() {
-    if (modoEdicion) {
-      document.getElementById("nro-fila-borrar").innerText = filaEdicion;
-      document.getElementById("aviso-confirmar-borrar").style.display = "block";
+  function clickEditar() {
+    if(modoEdicion) {
+      abrirModal({
+        titulo: "ELIMINAR",
+        cuerpo: `¿Seguro que quieres <b>ELIMINAR</b> la fila ${filaEdicion}?`,
+        icono: true, btnNo: "CANCELAR", btnOk: "SÍ, ELIMINAR",
+        callback: ejecutarEliminar
+      });
     } else {
-      const nro = prompt("Ingrese el número de fila a editar:");
-      if (!nro) return;
-      cargarFila(nro);
+      abrirModal({
+        titulo: "EDITAR FILA",
+        cuerpo: "Ingrese el número de fila a editar",
+        input: true, btnNo: "CANCELAR", btnOk: "BUSCAR",
+        callback: (n) => { if(n) cargarFila(n); }
+      });
     }
   }
 
-  async function cargarFila(nro) {
-    mostrar("Buscando fila " + nro + "... ⏳", "orange");
+  async function cargarFila(n) {
+    mostrar("Buscando...", "orange");
     try {
-      const resp = await fetch(URL_APPS_SCRIPT + "?nro_fila=" + nro);
-      const d = await resp.json();
-      if(d.status === "error") { mostrar("Fila no encontrada", "red"); return; }
+      const r = await fetch(URL_AS + "?nro_fila=" + n);
+      const d = await r.json();
+      if(d.status === "error") { mostrar("No encontrada", "red"); return; }
       
+      // Mapeo de datos
       document.getElementById("pickeador").value = d.pickeador;
       document.getElementById("nro_pedido").value = d.nro_pedido;
       document.getElementById("fecha").value = d.fecha;
@@ -281,78 +263,47 @@
       checkEAN(document.getElementById("ean_origen"), 'cont_origen');
       checkEAN(document.getElementById("ean_reemplazo"), 'cont_reemplazo');
       
-      activarModoEdicion(nro);
-      mostrar("Fila " + nro + " cargada", "blue");
-    } catch (e) { mostrar("Error de conexión", "red"); }
+      modoEdicion = true; filaEdicion = n;
+      actualizarBarra();
+      mostrar("Fila cargada", "blue");
+    } catch(e) { mostrar("Error", "red"); }
   }
 
-  function activarModoEdicion(nro) {
-    modoEdicion = true; filaEdicion = nro;
-    document.getElementById("header-text").innerText = "CORRIGIENDO FILA " + nro;
-    document.getElementById("bottomNav").classList.add("nav-edit-mode");
-    
-    // Cambios en botones
-    document.getElementById("iconIzquierdo").innerText = "❌";
-    document.getElementById("txtIzquierdo").innerText = "Cancelar";
-    
-    document.getElementById("btnCentro").style.background = "var(--naranja-edit)";
-    document.getElementById("txtCentro").innerText = "ACTUALIZAR FILA " + nro;
-    
-    document.getElementById("iconDerecho").innerText = "🗑️";
-    document.getElementById("txtDerecho").innerText = "Eliminar";
+  function actualizarBarra() {
+    const nav = document.getElementById("bottomNav");
+    if(modoEdicion) {
+      nav.classList.add("nav-edit-mode");
+      document.getElementById("header-text").innerText = "CORRIGIENDO FILA " + filaEdicion;
+      document.getElementById("txtIz").innerText = "Cancelar";
+      document.getElementById("btnIzquierdo").querySelector("span").innerText = "❌";
+      document.getElementById("txtCentro").innerText = "ACTUALIZAR FILA " + filaEdicion;
+      document.querySelector(".btn-main").style.background = "var(--naranja-edit)";
+      document.getElementById("txtDe").innerText = "Eliminar";
+      document.getElementById("btnDerecho").querySelector("span").innerText = "🗑️";
+    } else {
+      nav.classList.remove("nav-edit-mode");
+      document.getElementById("header-text").innerText = "REEMPLAZOS MEC";
+      document.getElementById("txtIz").innerText = "Nuevo";
+      document.getElementById("btnIzquierdo").querySelector("span").innerText = "➕";
+      document.getElementById("txtCentro").innerText = "GUARDAR DATOS";
+      document.querySelector(".btn-main").style.background = "var(--verde-exito)";
+      document.getElementById("txtDe").innerText = "Editar";
+      document.getElementById("btnDerecho").querySelector("span").innerText = "✏️";
+    }
   }
 
-  function cancelarEdicion() {
-    modoEdicion = false; filaEdicion = null;
-    document.getElementById("header-text").innerText = "REEMPLAZOS MEC";
-    document.getElementById("bottomNav").classList.remove("nav-edit-mode");
-    
-    document.getElementById("iconIzquierdo").innerText = "➕";
-    document.getElementById("txtIzquierdo").innerText = "Nuevo";
-    
-    document.getElementById("btnCentro").style.background = "var(--verde-exito)";
-    document.getElementById("txtCentro").innerText = "GUARDAR DATOS";
-    
-    document.getElementById("iconDerecho").innerText = "✏️";
-    document.getElementById("txtDerecho").innerText = "Editar";
-    mostrar("Edición cancelada", "black");
-  }
+  function cancelarEdicion() { modoEdicion = false; filaEdicion = null; actualizarBarra(); }
 
   async function ejecutarEliminar() {
-    cerrarAviso('aviso-confirmar-borrar');
-    mostrar("Eliminando fila... ⏳", "red");
+    mostrar("Eliminando...", "red");
     try {
-      const resp = await fetch(URL_APPS_SCRIPT, {
-        method: "POST",
-        body: JSON.stringify({ accion: "eliminar", nro_fila: filaEdicion })
-      });
-      vibrar();
-      mostrar("Eliminado con éxito ✅", "green");
-      cancelarEdicion();
-    } catch (e) { mostrar("Error al eliminar", "red"); }
-  }
-
-  function iniciarEscaneo(id) {
-    campoDestino = id; document.getElementById("scanner-modal").style.display = "flex";
-    if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
-    html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 150 } },
-      (text) => { 
-        vibrar();
-        document.getElementById(campoDestino).value = text.trim(); 
-        if (campoDestino === 'ean_reemplazo') checkEAN(document.getElementById(campoDestino), 'cont_reemplazo');
-        detenerEscaneo(); 
-      }, () => {}
-    ).catch(() => { alert("Error cámara"); detenerEscaneo(); });
-  }
-
-  function detenerEscaneo() {
-    if (html5QrCode && html5QrCode.isScanning) {
-      html5QrCode.stop().then(() => { document.getElementById("scanner-modal").style.display = "none"; });
-    } else { document.getElementById("scanner-modal").style.display = "none"; }
+      await fetch(URL_AS, { method: "POST", body: JSON.stringify({accion: "eliminar", nro_fila: filaEdicion})});
+      vibrar(); mostrar("Eliminado ✅", "green"); cancelarEdicion();
+    } catch(e) { mostrar("Error", "red"); }
   }
 
   async function validar() {
-    const datos = {
+    const d = {
       accion: modoEdicion ? "actualizar" : "insertar",
       nro_fila: filaEdicion,
       pickeador: document.getElementById("pickeador").value,
@@ -366,41 +317,66 @@
       det_reemplazo: document.getElementById("det_reemplazo").value.trim()
     };
 
-    if (!datos.pickeador || !datos.nro_pedido || !datos.ean_origen || !datos.ean_reemplazo) {
-      mostrar("Faltan datos ❌", "red"); return;
-    }
-    if (datos.ean_origen === datos.ean_reemplazo) {
-      document.getElementById("aviso-error").style.display = "block"; return;
+    if(!d.pickeador || !d.nro_pedido || !d.ean_origen || !d.ean_reemplazo) { mostrar("Faltan datos ❌", "red"); return; }
+    
+    if(d.ean_origen === d.ean_reemplazo) {
+      abrirModal({
+        titulo: "ALERTA", icono: true,
+        cuerpo: '<span class="text-rojo">EAN_ORIGEN y EAN_REEMPLAZO son iguales.</span>'
+      });
+      return;
     }
 
-    mostrar("Enviando... ⏳", "orange");
+    mostrar("Enviando...", "orange");
     try {
-      const resp = await fetch(URL_APPS_SCRIPT, { method: "POST", body: JSON.stringify(datos) });
-      const resJson = await resp.json();
-      
-      if (resJson.status === "duplicado") {
-        alert(resJson.mensaje);
-        mostrar("Error: Duplicado", "red");
+      const r = await fetch(URL_AS, { method: "POST", body: JSON.stringify(d)});
+      const res = await r.json();
+      if(res.status === "duplicado") {
+        abrirModal({
+          titulo: "DUPLICADO", icono: true,
+          cuerpo: `<span class="text-rojo">${res.mensaje}</span>`
+        });
       } else {
-        vibrar();
-        mostrar("¡Éxito! ✅", "green");
-        if (modoEdicion) cancelarEdicion();
-        else { 
+        vibrar(); mostrar("¡Éxito! ✅", "green");
+        if(modoEdicion) cancelarEdicion();
+        else {
           document.getElementById("ean_origen").value = ""; document.getElementById("ean_reemplazo").value = "";
-          document.getElementById("uni_origen").value = "1"; document.getElementById("uni_reemplazo").value = "1";
-          document.querySelectorAll('.detalle-container').forEach(c => c.style.display = "none");
+          document.querySelectorAll(".detalle-container").forEach(c => c.style.display="none");
         }
       }
-    } catch (err) { mostrar("Error de red", "red"); }
+    } catch(e) { mostrar("Error", "red"); }
   }
 
+  function checkEAN(i, cId) {
+    const pref = ["23", "25", "26", "29"];
+    document.getElementById(cId).style.display = pref.some(p => i.value.startsWith(p)) ? "block" : "none";
+  }
   function formatearUnidad(v) {
-    let s = v.toString().replace(',', '.').trim();
-    if (!s) return "0";
+    let s = v.toString().replace(',','.').trim();
     return s.includes('.') ? parseFloat(s) + " kg" : s;
   }
+  function mostrar(t, c) { 
+    const m = document.getElementById("mensaje-flotante");
+    m.innerText = t; m.style.color = c;
+    if(c === 'green') setTimeout(() => m.innerText="", 3000);
+  }
 
-  function cerrarAviso(id) { document.getElementById(id).style.display = "none"; }
+  function iniciarEscaneo(id) {
+    campoDestino = id; document.getElementById("scanner-modal").style.display = "flex";
+    if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
+    html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 150 } },
+      (text) => { 
+        vibrar(); document.getElementById(campoDestino).value = text.trim(); 
+        if (campoDestino === 'ean_reemplazo') checkEAN(document.getElementById(campoDestino), 'cont_reemplazo');
+        detenerEscaneo(); 
+      }, () => {}
+    ).catch(() => { alert("Error cámara"); detenerEscaneo(); });
+  }
+  function detenerEscaneo() {
+    if (html5QrCode && html5QrCode.isScanning) {
+      html5QrCode.stop().then(() => { document.getElementById("scanner-modal").style.display = "none"; });
+    } else { document.getElementById("scanner-modal").style.display = "none"; }
+  }
 </script>
 </body>
 </html>
