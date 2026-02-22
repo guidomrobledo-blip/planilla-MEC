@@ -107,10 +107,26 @@
   <div class="card">
     <div class="card-title">Información de Pedido</div>
     <label>Pickeador</label>
-    <select id="pickeador">
-      <option value="">Seleccionar</option>
-      <option>Juan</option><option>Ana</option><option>Carlos</option>
-    </select>
+   <select id="pickeador" required>
+    <option value="" disabled selected>Seleccionar Colaborador...</option>
+    <option>Beatriz. J</option>
+    <option>Betina. A</option>
+    <option>Dana. P</option>
+    <option>Diego. J</option>
+    <option>Elsa. R</option>
+    <option>Facundo. B</option>
+    <option>Florencia. R</option>
+    <option>Gastón. D</option>
+    <option>Guido. R</option>
+    <option>Maxi. F</option>
+    <option>Máximo. L</option>
+    <option>Milena. S</option>
+    <option>Norma. F</option>
+    <option>Santiago. P</option>
+    <option>Sebastián. A</option>
+    <option>Valentino. M</option>
+    <option>Colaborador</option>
+</select>
     <label>Nro Pedido</label>
     <input type="text" id="nro_pedido" inputmode="numeric">
     <button type="button" class="btn-scan" onclick="iniciarEscaneo('nro_pedido')">📷 Escanear Pedido</button>
