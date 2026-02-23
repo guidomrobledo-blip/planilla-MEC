@@ -27,7 +27,7 @@
     background-color: var(--gris-fondo); 
     color: #333; 
     padding-bottom: 100px; 
-    font-size: 16px;
+    font-size: 16px; /* Base aumentada */
   }
   
   header { 
@@ -40,12 +40,12 @@
 
   .card {
     background: var(--blanco); border-radius: 15px; 
-    padding: 14px 18px;
+    padding: 14px 18px; /* Reducción mínima de padding para compensar letra grande */
     margin-bottom: 15px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.05);
   }
   .card-title {
-    font-size: 14px;
+    font-size: 14px; /* Un punto más grande */
     font-weight: bold; color: var(--azul-corp);
     margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; text-transform: uppercase;
   }
@@ -53,36 +53,17 @@
   label { 
     font-weight: 600; display: block; 
     margin-top: 8px; 
-    font-size: 16px;
+    font-size: 16px; /* Letra más grande para etiquetas */
     color: #555; 
   }
   input, select { 
     width: 100%; padding: 12px; 
-    font-size: 18px;
+    font-size: 18px; /* Texto de escritura más grande */
     margin-top: 5px; 
     box-sizing: border-box; border: 1px solid #ddd; border-radius: 8px; background: #fdfdfd;
   }
 
-  /* MENSAJE FLOTANTE TIPO TOAST CENTRAL */
-  #mensaje-flotante {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 9999;
-    padding: 20px 30px;
-    border-radius: 20px;
-    background: white;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-    border: 3px solid transparent;
-    font-size: 22px;
-    font-weight: bold;
-    display: none;
-    text-align: center;
-    min-width: 220px;
-    pointer-events: none;
-  }
-
+  /* BARRA INFERIOR */
   .bottom-nav {
     position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
     width: 90%; max-width: 450px; background: #333; height: 70px; border-radius: 50px;
@@ -104,6 +85,7 @@
 
   .detalle-container { display: none; background: #eef2ff; padding: 12px; border-radius: 10px; margin-top: 8px; border-left: 5px solid var(--azul-corp); }
   
+  /* SISTEMA DE MODALES UNIFICADO */
   .modal-overlay {
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0,0,0,0.6); z-index: 4000; align-items: center; justify-content: center;
@@ -115,7 +97,7 @@
   @keyframes scaleUp { from {transform: scale(0.8); opacity: 0;} to {transform: scale(1); opacity: 1;} }
   
   .modal-header { background: var(--azul-corp); color: white; padding: 12px; text-align: center; font-weight: bold; position: relative; }
-  .modal-body { padding: 20px; text-align: center; font-size: 18px; line-height: 1.4; }
+  .modal-body { padding: 20px; text-align: center; font-size: 18px; line-height: 1.4; } /* Cuerpo de modal más legible */
   .modal-footer { display: flex; border-top: 1px solid #eee; }
   .modal-btn { 
     flex: 1; padding: 15px; border: none; background: none; font-size: 14px; 
@@ -137,7 +119,7 @@
 <header><span id="header-text">REEMPLAZOS MEC</span></header>
 
 <main>
-  <div id="mensaje-flotante"></div>
+  <div id="mensaje-flotante" style="text-align:center; height: 20px; font-weight:bold;"></div>
   
   <div class="card">
     <div class="card-title">Información de Pedido</div>
@@ -196,7 +178,7 @@
 </main>
 
 <nav class="bottom-nav" id="bottomNav">
-  <button class="nav-item" id="btnIzquierdo" onclick="clickNuevo()"><span style="font-size:24px; color: white;">➕</span><span id="txtIz">Nuevo</span></button>
+  <button class="nav-item" id="btnIzquierdo" onclick="clickNuevo()"><span style="font-size:24px">➕</span><span id="txtIz">Nuevo</span></button>
   <button class="btn-main" onclick="validar()"><span id="txtCentro">GUARDAR DATOS</span></button>
   <button class="nav-item" id="btnDerecho" onclick="clickEditar()"><span style="font-size:24px">✏️</span><span id="txtDe">Editar</span></button>
 </nav>
@@ -209,7 +191,8 @@
       <div id="modal-contenido"></div>
       <input type="number" id="modal-input" style="display:none; margin-top:15px; text-align:center;" placeholder="Fila #">
     </div>
-    <div class="modal-footer" id="modal-footer"></div>
+    <div class="modal-footer" id="modal-footer">
+      </div>
   </div>
 </div>
 
@@ -223,15 +206,7 @@
 
   function vibrar() { if (navigator.vibrate) navigator.vibrate(150); }
 
-  function mostrar(t, c) { 
-    const m = document.getElementById("mensaje-flotante");
-    m.innerHTML = t;
-    m.style.color = c;
-    m.style.borderColor = c === 'green' ? 'var(--verde-exito)' : c;
-    m.style.display = "block";
-    if(c === 'green') setTimeout(() => { m.style.display = "none"; }, 2500);
-  }
-
+  // GESTIÓN DE MODALES PERSONALIZADOS
   function abrirModal({titulo, cuerpo, icono, input, btnOk, btnNo, callback}) {
     document.getElementById("modal-titulo").innerText = titulo;
     document.getElementById("modal-contenido").innerHTML = cuerpo;
@@ -239,22 +214,34 @@
     const inpt = document.getElementById("modal-input");
     inpt.style.display = input ? "block" : "none";
     inpt.value = "";
+    
     const footer = document.getElementById("modal-footer");
     footer.innerHTML = "";
+    
     if(btnNo) {
       let bNo = document.createElement("button");
-      bNo.className = "modal-btn modal-btn-neutral"; bNo.innerText = btnNo;
-      bNo.onclick = () => cerrarModal(); footer.appendChild(bNo);
+      bNo.className = "modal-btn modal-btn-neutral";
+      bNo.innerText = btnNo;
+      bNo.onclick = () => cerrarModal();
+      footer.appendChild(bNo);
     }
+    
     let bOk = document.createElement("button");
-    bOk.className = "modal-btn modal-btn-primary"; bOk.innerText = btnOk || "ACEPTAR";
-    bOk.onclick = () => { let val = inpt.value; cerrarModal(); if(callback) callback(val); };
+    bOk.className = "modal-btn modal-btn-primary";
+    bOk.innerText = btnOk || "ACEPTAR";
+    bOk.onclick = () => { 
+      let val = inpt.value; 
+      cerrarModal(); 
+      if(callback) callback(val); 
+    };
     footer.appendChild(bOk);
+    
     document.getElementById("modal-app").style.display = "flex";
   }
 
   function cerrarModal() { document.getElementById("modal-app").style.display = "none"; }
 
+  // LOGICA DE BOTONES
   function clickNuevo() {
     if(modoEdicion) cancelarEdicion();
     else {
@@ -264,11 +251,9 @@
         btnNo: "NO", btnOk: "SÍ",
         callback: () => {
           document.querySelectorAll("input").forEach(i => i.value="");
-          document.getElementById("pickeador").selectedIndex = 0; 
           document.getElementById("fecha").valueAsDate = new Date();
           document.getElementById("uni_origen").value = "1";
           document.getElementById("uni_reemplazo").value = "1";
-          document.querySelectorAll(".detalle-container").forEach(c => c.style.display="none");
         }
       });
     }
@@ -297,7 +282,9 @@
     try {
       const r = await fetch(URL_AS + "?nro_fila=" + n);
       const d = await r.json();
-      if(d.status === "error") { mostrar("No encontrada", "red"); setTimeout(()=>document.getElementById("mensaje-flotante").style.display="none", 2000); return; }
+      if(d.status === "error") { mostrar("No encontrada", "red"); return; }
+      
+      // Mapeo de datos
       document.getElementById("pickeador").value = d.pickeador;
       document.getElementById("nro_pedido").value = d.nro_pedido;
       document.getElementById("fecha").value = d.fecha;
@@ -307,10 +294,13 @@
       document.getElementById("uni_reemplazo").value = d.uni_reemplazo.toString().replace(" kg","");
       document.getElementById("det_origen").value = d.det_origen || "";
       document.getElementById("det_reemplazo").value = d.det_reemplazo || "";
+      
       checkEAN(document.getElementById("ean_origen"), 'cont_origen');
       checkEAN(document.getElementById("ean_reemplazo"), 'cont_reemplazo');
-      modoEdicion = true; filaEdicion = n; actualizarBarra();
-      document.getElementById("mensaje-flotante").style.display="none";
+      
+      modoEdicion = true; filaEdicion = n;
+      actualizarBarra();
+      mostrar("Fila cargada", "blue");
     } catch(e) { mostrar("Error", "red"); }
   }
 
@@ -361,17 +351,26 @@
       det_origen: document.getElementById("det_origen").value.trim(),
       det_reemplazo: document.getElementById("det_reemplazo").value.trim()
     };
+
     if(!d.pickeador || !d.nro_pedido || !d.ean_origen || !d.ean_reemplazo) { mostrar("Faltan datos ❌", "red"); return; }
+    
     if(d.ean_origen === d.ean_reemplazo) {
-      abrirModal({ titulo: "ALERTA", icono: true, cuerpo: '<span class="text-rojo">EAN_ORIGEN y EAN_REEMPLAZO son iguales.</span>' });
+      abrirModal({
+        titulo: "ALERTA", icono: true,
+        cuerpo: '<span class="text-rojo">EAN_ORIGEN y EAN_REEMPLAZO son iguales.</span>'
+      });
       return;
     }
+
     mostrar("Enviando...", "orange");
     try {
       const r = await fetch(URL_AS, { method: "POST", body: JSON.stringify(d)});
       const res = await r.json();
       if(res.status === "duplicado") {
-        abrirModal({ titulo: "DUPLICADO", icono: true, cuerpo: `<span class="text-rojo">${res.mensaje}</span>` });
+        abrirModal({
+          titulo: "DUPLICADO", icono: true,
+          cuerpo: `<span class="text-rojo">${res.mensaje}</span>`
+        });
       } else {
         vibrar(); mostrar("¡Éxito! ✅", "green");
         if(modoEdicion) cancelarEdicion();
@@ -391,6 +390,12 @@
     let s = v.toString().replace(',','.').trim();
     return s.includes('.') ? parseFloat(s) + " kg" : s;
   }
+  function mostrar(t, c) { 
+    const m = document.getElementById("mensaje-flotante");
+    m.innerText = t; m.style.color = c;
+    if(c === 'green') setTimeout(() => m.innerText="", 3000);
+  }
+
   function iniciarEscaneo(id) {
     campoDestino = id; document.getElementById("scanner-modal").style.display = "flex";
     if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
