@@ -44,18 +44,10 @@
     margin-bottom: 15px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.05);
   }
-
-  /* 🔥 AJUSTE CORPORATIVO */
   .card-title {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--azul-corp);
-    margin: 5px 0 12px 0;
-    padding: 0 0 6px 10px;
-    border-left: 4px solid var(--azul-corp);
-    border-bottom: 1px solid #e6e9ee;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
+    font-size: 18px; 
+    font-weight: bold; color: var(--azul-corp);
+    margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; text-transform: uppercase;
   }
   
   label { 
@@ -183,10 +175,215 @@
   </div>
 </main>
 
-<!-- TODO lo demás queda EXACTAMENTE igual -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="nav-item" id="btnIzquierdo" onclick="clickNuevo()"><span style="font-size:24px; color: white;">➕</span><span id="txtIz">Nuevo</span></button>
+  <button class="btn-main" onclick="validar()"><span id="txtCentro">GUARDAR DATOS</span></button>
+  <button class="nav-item" id="btnDerecho" onclick="clickEditar()"><span style="font-size:24px">✏️</span><span id="txtDe">Editar</span></button>
+</nav>
+
+<div id="modal-app" class="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-header" id="modal-titulo">AVISO</div>
+    <div class="modal-body">
+      <span id="modal-icono" class="icon-alerta" style="display:none">⚠️</span>
+      <div id="modal-contenido"></div>
+      <input type="number" id="modal-input" style="display:none; margin-top:15px; text-align:center;" placeholder="Fila #">
+    </div>
+    <div class="modal-footer" id="modal-footer"></div>
+  </div>
+</div>
+
+<div id="scanner-modal"><div id="reader"></div><button onclick="detenerEscaneo()" style="width:60px;height:60px;border-radius:50%;background:white;color:red;margin-top:20px;">X</button></div>
+
 <script src="https://unpkg.com/html5-qrcode"></script>
 <script>
-/* SIN CAMBIOS */
+  const URL_AS = "https://script.google.com/macros/s/AKfycbwiMpL8ZURadusx__D22WYAEwx5dD9exP3YTAEx4Whz4Ni-Hpv3oUfbMSe5w2ZutQXAdQ/exec";
+  let modoEdicion = false, filaEdicion = null, html5QrCode;
+  document.getElementById("fecha").valueAsDate = new Date();
+
+  function vibrar() { if (navigator.vibrate) navigator.vibrate(150); }
+
+  function abrirModal({titulo, cuerpo, icono, input, btnOk, btnNo, callback}) {
+    document.getElementById("modal-titulo").innerText = titulo;
+    document.getElementById("modal-contenido").innerHTML = cuerpo;
+    document.getElementById("modal-icono").style.display = icono ? "block" : "none";
+    const inpt = document.getElementById("modal-input");
+    inpt.style.display = input ? "block" : "none";
+    inpt.value = "";
+    const footer = document.getElementById("modal-footer");
+    footer.innerHTML = "";
+    if(btnNo) {
+      let bNo = document.createElement("button");
+      bNo.className = "modal-btn modal-btn-neutral"; bNo.innerText = btnNo;
+      bNo.onclick = () => cerrarModal(); footer.appendChild(bNo);
+    }
+    let bOk = document.createElement("button");
+    bOk.className = "modal-btn modal-btn-primary"; bOk.innerText = btnOk || "ACEPTAR";
+    bOk.onclick = () => { let val = inpt.value; cerrarModal(); if(callback) callback(val); };
+    footer.appendChild(bOk);
+    document.getElementById("modal-app").style.display = "flex";
+  }
+
+  function cerrarModal() { document.getElementById("modal-app").style.display = "none"; }
+
+  function clickNuevo() {
+    if(modoEdicion) cancelarEdicion();
+    else {
+      abrirModal({
+        titulo: "CONFIRMAR",
+        cuerpo: "¿Limpiar todos los campos?",
+        btnNo: "NO", btnOk: "SÍ",
+        callback: () => {
+          document.querySelectorAll("input").forEach(i => i.value="");
+          // AJUSTE: El campo pickeador vuelve a la instrucción inicial
+          document.getElementById("pickeador").selectedIndex = 0;
+          document.getElementById("fecha").valueAsDate = new Date();
+          document.getElementById("uni_origen").value = "1";
+          document.getElementById("uni_reemplazo").value = "1";
+          document.querySelectorAll(".detalle-container").forEach(c => c.style.display="none");
+        }
+      });
+    }
+  }
+
+  function clickEditar() {
+    if(modoEdicion) {
+      abrirModal({
+        titulo: "ELIMINAR",
+        cuerpo: `¿Seguro que quieres <b>ELIMINAR</b> la fila ${filaEdicion}?`,
+        icono: true, btnNo: "CANCELAR", btnOk: "SÍ, ELIMINAR",
+        callback: ejecutarEliminar
+      });
+    } else {
+      abrirModal({
+        titulo: "EDITAR FILA",
+        cuerpo: "Ingrese el número de fila a editar",
+        input: true, btnNo: "CANCELAR", btnOk: "BUSCAR",
+        callback: (n) => { if(n) cargarFila(n); }
+      });
+    }
+  }
+
+  async function cargarFila(n) {
+    mostrar("Buscando...", "orange");
+    try {
+      const r = await fetch(URL_AS + "?nro_fila=" + n);
+      const d = await r.json();
+      if(d.status === "error") { mostrar("No encontrada", "red"); return; }
+      document.getElementById("pickeador").value = d.pickeador;
+      document.getElementById("nro_pedido").value = d.nro_pedido;
+      document.getElementById("fecha").value = d.fecha;
+      document.getElementById("ean_origen").value = d.ean_origen;
+      document.getElementById("uni_origen").value = d.uni_origen.toString().replace(" kg","");
+      document.getElementById("ean_reemplazo").value = d.ean_reemplazo;
+      document.getElementById("uni_reemplazo").value = d.uni_reemplazo.toString().replace(" kg","");
+      document.getElementById("det_origen").value = d.det_origen || "";
+      document.getElementById("det_reemplazo").value = d.det_reemplazo || "";
+      checkEAN(document.getElementById("ean_origen"), 'cont_origen');
+      checkEAN(document.getElementById("ean_reemplazo"), 'cont_reemplazo');
+      modoEdicion = true; filaEdicion = n; actualizarBarra();
+      mostrar("Fila cargada", "blue");
+    } catch(e) { mostrar("Error", "red"); }
+  }
+
+  function actualizarBarra() {
+    const nav = document.getElementById("bottomNav");
+    if(modoEdicion) {
+      nav.classList.add("nav-edit-mode");
+      document.getElementById("header-text").innerText = "CORRIGIENDO FILA " + filaEdicion;
+      document.getElementById("txtIz").innerText = "Cancelar";
+      document.getElementById("btnIzquierdo").querySelector("span").innerText = "❌";
+      document.getElementById("txtCentro").innerText = "ACTUALIZAR FILA " + filaEdicion;
+      document.querySelector(".btn-main").style.background = "var(--naranja-edit)";
+      document.getElementById("txtDe").innerText = "Eliminar";
+      document.getElementById("btnDerecho").querySelector("span").innerText = "🗑️";
+    } else {
+      nav.classList.remove("nav-edit-mode");
+      document.getElementById("header-text").innerText = "REEMPLAZOS MEC";
+      document.getElementById("txtIz").innerText = "Nuevo";
+      document.getElementById("btnIzquierdo").querySelector("span").innerText = "➕";
+      document.getElementById("txtCentro").innerText = "GUARDAR DATOS";
+      document.querySelector(".btn-main").style.background = "var(--verde-exito)";
+      document.getElementById("txtDe").innerText = "Editar";
+      document.getElementById("btnDerecho").querySelector("span").innerText = "✏️";
+    }
+  }
+
+  function cancelarEdicion() { modoEdicion = false; filaEdicion = null; actualizarBarra(); }
+
+  async function ejecutarEliminar() {
+    mostrar("Eliminando...", "red");
+    try {
+      await fetch(URL_AS, { method: "POST", body: JSON.stringify({accion: "eliminar", nro_fila: filaEdicion})});
+      vibrar(); mostrar("Eliminado ✅", "green"); cancelarEdicion();
+    } catch(e) { mostrar("Error", "red"); }
+  }
+
+  async function validar() {
+    const d = {
+      accion: modoEdicion ? "actualizar" : "insertar",
+      nro_fila: filaEdicion,
+      pickeador: document.getElementById("pickeador").value,
+      nro_pedido: document.getElementById("nro_pedido").value.trim(),
+      fecha: document.getElementById("fecha").value,
+      ean_origen: document.getElementById("ean_origen").value.trim(),
+      uni_origen: formatearUnidad(document.getElementById("uni_origen").value),
+      ean_reemplazo: document.getElementById("ean_reemplazo").value.trim(),
+      uni_reemplazo: formatearUnidad(document.getElementById("uni_reemplazo").value),
+      det_origen: document.getElementById("det_origen").value.trim(),
+      det_reemplazo: document.getElementById("det_reemplazo").value.trim()
+    };
+    if(!d.pickeador || !d.nro_pedido || !d.ean_origen || !d.ean_reemplazo) { mostrar("Faltan datos ❌", "red"); return; }
+    if(d.ean_origen === d.ean_reemplazo) {
+      abrirModal({ titulo: "ALERTA", icono: true, cuerpo: '<span class="text-rojo">EAN_ORIGEN y EAN_REEMPLAZO son iguales.</span>' });
+      return;
+    }
+    mostrar("Enviando...", "orange");
+    try {
+      const r = await fetch(URL_AS, { method: "POST", body: JSON.stringify(d)});
+      const res = await r.json();
+      if(res.status === "duplicado") {
+        abrirModal({ titulo: "DUPLICADO", icono: true, cuerpo: `<span class="text-rojo">${res.mensaje}</span>` });
+      } else {
+        vibrar(); mostrar("¡Éxito! ✅", "green");
+        if(modoEdicion) cancelarEdicion();
+        else {
+          document.getElementById("ean_origen").value = ""; document.getElementById("ean_reemplazo").value = "";
+          document.querySelectorAll(".detalle-container").forEach(c => c.style.display="none");
+        }
+      }
+    } catch(e) { mostrar("Error", "red"); }
+  }
+
+  function checkEAN(i, cId) {
+    const pref = ["23", "25", "26", "29"];
+    document.getElementById(cId).style.display = pref.some(p => i.value.startsWith(p)) ? "block" : "none";
+  }
+  function formatearUnidad(v) {
+    let s = v.toString().replace(',','.').trim();
+    return s.includes('.') ? parseFloat(s) + " kg" : s;
+  }
+  function mostrar(t, c) { 
+    const m = document.getElementById("mensaje-flotante");
+    m.innerText = t; m.style.color = c;
+    if(c === 'green') setTimeout(() => m.innerText="", 3000);
+  }
+  function iniciarEscaneo(id) {
+    campoDestino = id; document.getElementById("scanner-modal").style.display = "flex";
+    if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
+    html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 150 } },
+      (text) => { 
+        vibrar(); document.getElementById(campoDestino).value = text.trim(); 
+        if (campoDestino === 'ean_reemplazo') checkEAN(document.getElementById(campoDestino), 'cont_reemplazo');
+        detenerEscaneo(); 
+      }, () => {}
+    ).catch(() => { alert("Error cámara"); detenerEscaneo(); });
+  }
+  function detenerEscaneo() {
+    if (html5QrCode && html5QrCode.isScanning) {
+      html5QrCode.stop().then(() => { document.getElementById("scanner-modal").style.display = "none"; });
+    } else { document.getElementById("scanner-modal").style.display = "none"; }
+  }
 </script>
 </body>
 </html>
