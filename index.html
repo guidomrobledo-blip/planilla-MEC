@@ -354,10 +354,26 @@
         abrirModal({ titulo: "DUPLICADO", icono: true, cuerpo: `<span class="text-rojo">${res.mensaje}</span>` });
       } else {
         vibrar(); mostrar("¡Éxito! ✅", "green");
-        if(modoEdicion) cancelarEdicion();
-        else {
-          document.getElementById("ean_origen").value = ""; document.getElementById("ean_reemplazo").value = "";
-          document.querySelectorAll(".detalle-container").forEach(c => c.style.display="none");
+         if(modoEdicion) {
+        cancelarEdicion();
+      } else {
+        // INFORMACIÓN DEL PEDIDO
+        document.getElementById("pickeador").selectedIndex = 0;
+        document.getElementById("nro_pedido").value = "";
+        document.getElementById("fecha").valueAsDate = new Date();
+    
+        // PRODUCTO ORIGINAL
+        document.getElementById("ean_origen").value = "";
+        document.getElementById("uni_origen").value = "1";
+        document.getElementById("det_origen").value = "";
+    
+        // PRODUCTO REEMPLAZO
+        document.getElementById("ean_reemplazo").value = "";
+        document.getElementById("uni_reemplazo").value = "1";
+        document.getElementById("det_reemplazo").value = "";
+    
+        // OCULTAR DETALLES
+        document.querySelectorAll(".detalle-container").forEach(c => c.style.display="none");
         }
       }
     } catch(e) { mostrar("Error", "red"); }
